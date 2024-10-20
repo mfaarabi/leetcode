@@ -6,10 +6,16 @@ class Solution:
         stack = []
         res = ""
         for ch in s:
+            # print("current ch: " + ch)
             if ch.isdigit():
-                stack.append(int(ch))
+                # case: 100[
+                if stack and isinstance(stack[-1], int):
+                    stack[-1] = int(str(stack[-1]) + ch)
+                else:
+                    stack.append(int(ch))
             elif ch == "[":
-                continue
+                # case: 2[2
+                stack.append(ch)
             elif ch == "]":
                 mult = ""
                 arr = stack.pop()
@@ -20,12 +26,18 @@ class Solution:
                 else:
                     res += mult
             else:
-                if stack and isinstance(stack[-1], int):
-                    stack.append([ch])
-                elif stack:
-                    stack[-1].append(ch)
+                if stack:
+                    if isinstance(stack[-1], int):
+                        stack.append([ch])
+                    # case: 2[2
+                    elif stack[-1] == "[":
+                        stack.pop()
+                        stack.append([ch])
+                    else: 
+                        stack[-1].append(ch)
                 else:
                     res += ch
+            # print(stack, res)
 
         return res
 
@@ -33,5 +45,7 @@ if __name__ == "__main__":
     solution = Solution()
     # result = solution.decodeString("3[aa]")
     # result = solution.decodeString("3[a2[c]]")
-    result = solution.decodeString("2[abc]3[cd]ef")
+    # result = solution.decodeString("2[abc]3[cd]ef")
+    # result = solution.decodeString("100[leetcode]")
+    result = solution.decodeString("3[z]2[2[y]pq4[2[jk]e1[f]]]ef")
     print(result)
